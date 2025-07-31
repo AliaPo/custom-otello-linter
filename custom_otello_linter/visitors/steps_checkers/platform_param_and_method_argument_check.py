@@ -24,15 +24,15 @@ class PlatformParamsChecker(StepsChecker):
                 for decorator in step.decorator_list:
                     if isinstance(decorator, ast.Call) and decorator.func.id == 'params':
                         for arg in decorator.args:
-                            if isinstance(arg, ast.Attribute) and arg.attr == 'Platforms':
+                            if isinstance(arg, ast.Attribute) and arg.value.id == 'Platforms':
                                 platform_param_present = True
                                 break
 
         if platform_param_present:
             for step in context.steps:
                 # Проверяем, что шаг является функцией и начинается с 'given' или 'when'
-                if ((isinstance(step, ast.AsyncFunctionDef) or isinstance(step, ast.FunctionDef)) and
-                   (step.name.startswith('given') or step.name.startswith('when'))):
+                if ((isinstance(step, ast.AsyncFunctionDef) or isinstance(step, ast.FunctionDef))
+                   and (step.name.startswith('given') or step.name.startswith('when'))):
 
                     for element in step.body:
                         # Проверяем, что в теле шага есть вызов функции с параметром platform
