@@ -1,2 +1,2 @@
 from .make_screenshot_checker import MakeScreenshotChecker
-from .platform_param_and_method_argument_check import PlatformParamsChecker
+from .platform_usage_checker import PlatformParamsChecker
