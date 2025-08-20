@@ -143,3 +143,22 @@ def test_scenario_with_line_similar_to_opening_context():
                 self.notification_text = await self.page.notification.text.text_content()
     """
     assert_not_error(ScenarioVisitor, code, MissingPlatformArgError)
+
+
+def test_scenario_with_line_similar_to_opening_context_and_missing_platform():
+    ScenarioVisitor.deregister_all()
+    ScenarioVisitor.register_steps_checker(PlatformParamsChecker)
+    code = """
+    class Scenario(vedro.Scenario):
+
+        @params(Platforms.DESKTOP)
+        @params(Platforms.MOBILE)
+        def __init__(self, platform):
+            pass
+
+        async def given_opened_page(self):
+            with mocked_page():
+                self.page = await opened_page(booking=self.booking)
+                self.notification_text = await self.page.notification.text.text_content()
+    """
+    assert_error(ScenarioVisitor, code, MissingPlatformArgError)

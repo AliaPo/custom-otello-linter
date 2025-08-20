@@ -29,7 +29,7 @@ class PlatformParamsChecker(StepsChecker):
                             and isinstance(element.value, ast.Await)
                             and isinstance(element.value.value, ast.Call)
                             and isinstance(element.value.value.func, ast.Name)
-                            and 'opened' in element.value.value.func.id
+                            and element.value.value.func.id.startswith('opened')
                     ):
                         # Проверяем, что в теле шага есть вызов функции с keyword параметром platform
                         for kw_arg in element.value.value.keywords:
