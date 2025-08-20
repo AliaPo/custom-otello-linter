@@ -80,8 +80,8 @@ def test_scenario_with_platform_param_not_used():
     code = """
     class Scenario(vedro.Scenario):
 
-        @params(Platforms.DESKTOP)
-        @params(Platforms.MOBILE)
+        @params[allure_labels(AllureID('808960'))](Platforms.DESKTOP)
+        @params[allure_labels(AllureID('808961'))](Platforms.MOBILE)
         def __init__(self, platform):
             pass
 
@@ -98,7 +98,7 @@ def test_scenario_with_platform_param_not_used_in_when_step():
     class Scenario(vedro.Scenario):
 
         @params(Platforms.DESKTOP)
-        @params(Platforms.MOBILE)
+        @params[allure_labels(AllureID('808960'))](Platforms.MOBILE)
         def __init__(self, platform):
             pass
 
