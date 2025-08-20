@@ -16,26 +16,19 @@ def is_platform_param_present(init_step: ast.FunctionDef) -> bool:
     """
     Проходит по списку декораторов и ищет в них вызовы params с атрибутом Platforms
     """
-
-    def is_platforms_in_decorator(dec: ast.Call) -> bool:
-        # Ищем Platforms в аргументах декоратора params
-        for arg in dec.args:
-            if (
-                    isinstance(arg, ast.Attribute)
-                    and isinstance(arg.value, ast.Name)
-                    and arg.value.id == 'Platforms'
-            ):
-                return True
-        return False
-
     for decorator in init_step.decorator_list:
         if isinstance(decorator, ast.Call):
-            match decorator:
-                # Для декораторов вида "@params[allure_labels(AllureID('808960'))](Platforms.MOBILE)"
-                case ast.Call(func=ast.Subscript(value=ast.Name(id='params'))):
-                    return is_platforms_in_decorator(decorator)
-                # Для декораторов вида "@params(Platforms.MOBILE)"
-                case ast.Call(func=ast.Name(id='params')):
-                    return is_platforms_in_decorator(decorator)
-
+            # Для декораторов вида "@params[allure_labels(AllureID('808960'))](Platforms.MOBILE)"
+            # и "@params(Platforms.MOBILE)"
+            if (decorator is ast.Call(func=ast.Subscript(value=ast.Name(id='params')))
+                    or ast.Call(func=ast.Name(id='params'))):
+                # Ищем Platforms в аргументах декоратора params
+                for arg in decorator.args:
+                    if (
+                            isinstance(arg, ast.Attribute)
+                            and isinstance(arg.value, ast.Name)
+                            and arg.value.id == 'Platforms'
+                    ):
+                        return True
+                return False
     return False

@@ -16,9 +16,9 @@ def test_scenario_with_platform_param_used_as_kw_arg_in_mocked_context():
         def __init__(self, platform):
             pass
 
-        def given_opened_page(self):
+        async def given_opened_page(self):
             with mocked_page():
-                self.page = await open_page(booking=self.booking, platform=self.platform)
+                self.page = await opened_page(booking=self.booking, platform=self.platform)
     """
     assert_not_error(ScenarioVisitor, code)
 
@@ -35,7 +35,7 @@ def test_scenario_with_platform_param_used_as_pos_arg():
             pass
 
         def given_opened_page(self):
-            self.page = await open_page(self.booking, self.platform)
+            self.page = await opened_page(self.booking, self.platform)
     """
     assert_not_error(ScenarioVisitor, code)
 
@@ -54,8 +54,8 @@ def test_scenario_with_platform_param_in_when_step():
         def given_data_prepare(self):
             pass
 
-        def when_opened_page(self):
-            self.page = await open_page(self.booking, self.platform)
+        async def when_opened_page(self):
+            self.page = await opened_page(self.booking, self.platform)
     """
     assert_not_error(ScenarioVisitor, code)
 
@@ -69,7 +69,7 @@ def test_scenario_without_platform_param():
             pass
 
         def given_opened_page(self):
-            self.page = await open_page(self.booking)
+            self.page = await opened_page(self.booking)
     """
     assert_not_error(ScenarioVisitor, code)
 
@@ -85,8 +85,8 @@ def test_scenario_with_platform_param_not_used():
         def __init__(self, platform):
             pass
 
-        def given_opened_page(self):
-            self.page = await open_page(booking=self.booking)
+        async def given_opened_page(self):
+            self.page = await opened_page(booking=self.booking)
     """
     assert_error(ScenarioVisitor, code, MissingPlatformArgError)
 
@@ -103,7 +103,7 @@ def test_scenario_with_platform_param_not_used_in_when_step():
             pass
 
         def when_opened_page(self):
-            self.page = await open_page(booking=self.booking)
+            self.page = await opened_page(booking=self.booking)
     """
     assert_error(ScenarioVisitor, code, MissingPlatformArgError)
 
@@ -119,8 +119,27 @@ def test_scenario_with_platform_param_not_used_and_mocked_context():
         def __init__(self, platform):
             pass
 
-        def given_opened_page(self):
+        async def given_opened_page(self):
             with mocked_page():
-                self.page = await open_page(booking=self.booking)
+                self.page = await opened_page(booking=self.booking)
     """
     assert_error(ScenarioVisitor, code, MissingPlatformArgError)
+
+
+def test_scenario_with_line_similar_to_opening_context():
+    ScenarioVisitor.deregister_all()
+    ScenarioVisitor.register_steps_checker(PlatformParamsChecker)
+    code = """
+    class Scenario(vedro.Scenario):
+
+        @params(Platforms.DESKTOP)
+        @params(Platforms.MOBILE)
+        def __init__(self, platform):
+            pass
+
+        async def given_opened_page(self):
+            with mocked_page():
+                self.page = await opened_page(booking=self.booking, platform=self.platform)
+                self.notification_text = await self.page.notification.text.text_content()
+    """
+    assert_not_error(ScenarioVisitor, code, MissingPlatformArgError)
