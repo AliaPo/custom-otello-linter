@@ -2,5 +2,6 @@ from .errors import (
     DecoratorVedroParams,
     MissingMakeScreenshotFuncCallError,
     MissingScreenshotsAllureLabelError,
-    MultipleScreenshotsError
+    MultipleScreenshotsError,
+    MissingPlatformArgError
 )

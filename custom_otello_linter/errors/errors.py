@@ -22,3 +22,8 @@ class MissingScreenshotsAllureLabelError(Error):
 class MissingMakeScreenshotFuncCallError(Error):
     code = 'OCS301'
     message = 'test is marked with label "SCREENSHOTS" but doesn`t contain "make_screenshot_for_comparison" call'
+
+
+class MissingPlatformArgError(Error):
+    code = 'OCS302'
+    message = 'test is missing "platform" argument in page opening context call'
